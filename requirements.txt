@@ -1,0 +1,13 @@
+# Core scientific stack
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+
+# Demand forecasting
+xgboost
+
+# MILP dispatch solver — requires a Gurobi licence
+# (free academic licences: https://www.gurobi.com/academia/)
+gurobipy

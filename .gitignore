@@ -42,3 +42,18 @@ paper/extracted/*.out
 paper/extracted/*.blg
 paper/extracted/*.abs
 paper/extracted/*.bak
+
+# ---- Generated run outputs (regenerable by running the code) ----
+*.log
+optimising model/plots/
+**/results/**/*.png
+**/results/**/*.pdf
+
+# ---- Secrets / credentials (never commit) ----
+token.txt
+*.token
+*.pem
+*.key
+.env
+.env.*
+credentials*.json
