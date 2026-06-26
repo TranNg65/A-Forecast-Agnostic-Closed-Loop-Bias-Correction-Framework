@@ -1,0 +1,44 @@
+# ---- Data and large artifacts (not redistributable / exceed GitHub limits) ----
+data/
+outputs/
+archive/
+
+# Datasets and derived matrices
+*.csv
+*.parquet
+*.feather
+*.h5
+*.hdf5
+
+# Trained models (>100 MB; regenerate from code)
+**/model_*.json
+*.model
+*.pkl
+*.joblib
+*.ubj
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+*.egg-info/
+
+# ---- OS / editor / NFS ----
+.DS_Store
+.nfs*
+.vscode/
+.idea/
+
+# ---- LaTeX build artifacts ----
+*.aux
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+paper/extracted/*.log
+paper/extracted/*.out
+paper/extracted/*.blg
+paper/extracted/*.abs
+paper/extracted/*.bak

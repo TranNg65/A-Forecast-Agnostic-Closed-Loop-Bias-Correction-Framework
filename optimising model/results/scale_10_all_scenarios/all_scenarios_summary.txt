@@ -1,0 +1,47 @@
+7-scenario annual MPC summary
+  successful days: 364
+
+Annual realised cost ($):
+  Perfect Foresight          104,250.61
+  XGB-PI (proposed)          161,135.49
+  XGB-noPI                   167,544.66
+  SVR-PI                     175,942.97
+  SVR-noPI                   187,682.79
+  Historical Average         180,686.70
+  Persistence                201,700.81
+
+PI feedback gain:
+  XGB annual: $6,409.17  (mean $17.61/day, 293/364 wins)
+  SVR annual: $11,739.83  (mean $32.25/day, 301/364 wins)
+
+  Wilcoxon XGB: W=59469.0, p=2.478e-39
+  Wilcoxon SVR: W=59674.0, p=6.445e-40
+
+Forecast accuracy (mean across the year):
+  XGB-PI                 MAE= 10.078  RMSE= 14.725
+  XGB-noPI               MAE= 10.060  RMSE= 15.563
+  SVR-PI                 MAE= 13.211  RMSE= 18.423
+  SVR-noPI               MAE= 13.438  RMSE= 20.041
+  Historical Average     MAE= 14.299  RMSE= 19.324
+  Persistence            MAE= 18.119  RMSE= 25.613
+
+==============================================================================
+LaTeX rows — annual combined table
+==============================================================================
+
+Perfect Foresight (PF) & 104,250.61 & 42.30 & 0.00 & 0.000 & 0.000 \\
+\textbf{XGB-PI (proposed)} & 161,135.49 & 10.82 & 54.57 & 10.078 & 14.725 \\
+XGB-noPI & 167,544.66 & 7.27 & 60.71 & 10.060 & 15.563 \\
+SVR-PI & 175,942.97 & 2.63 & 68.77 & 13.211 & 18.423 \\
+SVR-noPI & 187,682.79 & -3.87 & 80.03 & 13.438 & 20.041 \\
+Historical Average & 180,686.70 & 0.00 & 73.32 & 14.299 & 19.324 \\
+Persistence & 201,700.81 & -11.63 & 93.48 & 18.119 & 25.613 \\
+
+LaTeX rows — combined PI ablation table
+------------------------------------------------------------------------------
+Annual cost saving from PI feedback & \$6,409.17 & \$11,739.83 \\
+Mean daily PI gain & \$17.61 & \$32.25 \\
+Median daily PI gain & \$15.05 & \$29.15 \\
+Days PI strictly improves cost (out of 364) & 293 & 301 \\
+Wilcoxon signed-rank statistic ($W$) & 59,469 & 59,674 \\
+$p$-value (alt.\ $\Delta C^{\mathrm{PI}}>0$) & 2.478e-39 & 6.445e-40 \\

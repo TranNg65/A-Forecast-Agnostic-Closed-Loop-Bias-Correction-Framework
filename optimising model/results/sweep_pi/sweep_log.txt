@@ -1,0 +1,66 @@
+
+=== Stage 1 (xgboost): sweep ρ ===
+[stage1_rho] xgboost        ρ=0.50 L= 7 γ=0.50 clip=[0.50,2.00] → $  173,248.48  Δ=$    -96.82  (110.7s)
+[stage1_rho] xgboost        ρ=0.70 L= 7 γ=0.50 clip=[0.50,2.00] → $  173,084.84  Δ=+$     66.82  (106.7s)
+[stage1_rho] xgboost        ρ=0.85 L= 7 γ=0.50 clip=[0.50,2.00] → $  173,225.71  Δ=$    -74.05  (107.5s)
+[stage1_rho] xgboost        ρ=0.90 L= 7 γ=0.50 clip=[0.50,2.00] → $  173,301.80  Δ=$   -150.15  (106.7s)
+
+=== Stage 1 (svr_nystroem): sweep ρ ===
+[stage1_rho] svr_nystroem   ρ=0.50 L= 7 γ=0.50 clip=[0.50,2.00] → $  180,521.77  Δ=$   -115.02  (120.4s)
+[stage1_rho] svr_nystroem   ρ=0.70 L= 7 γ=0.50 clip=[0.50,2.00] → $  180,448.50  Δ=$    -41.75  (120.5s)
+[stage1_rho] svr_nystroem   ρ=0.85 L= 7 γ=0.50 clip=[0.50,2.00] → $  180,420.49  Δ=$    -13.74  (120.5s)
+[stage1_rho] svr_nystroem   ρ=0.90 L= 7 γ=0.50 clip=[0.50,2.00] → $  180,325.49  Δ=+$     81.26  (120.2s)
+
+=== Stage 2 (xgboost): sweep L ===
+[stage2_L] xgboost        ρ=0.70 L= 3 γ=0.50 clip=[0.50,2.00] → $  173,330.73  Δ=$   -179.07  (109.8s)
+[stage2_L] xgboost        ρ=0.70 L= 7 γ=0.50 clip=[0.50,2.00] → $  173,084.84  Δ=+$     66.82  (107.2s)
+[stage2_L] xgboost        ρ=0.70 L=14 γ=0.50 clip=[0.50,2.00] → $  173,224.86  Δ=$    -73.21  (107.4s)
+[stage2_L] xgboost        ρ=0.70 L=21 γ=0.50 clip=[0.50,2.00] → $  173,207.30  Δ=$    -55.64  (108.7s)
+
+=== Stage 2 (svr_nystroem): sweep L ===
+[stage2_L] svr_nystroem   ρ=0.90 L= 3 γ=0.50 clip=[0.50,2.00] → $  180,857.93  Δ=$   -451.18  (119.2s)
+[stage2_L] svr_nystroem   ρ=0.90 L= 7 γ=0.50 clip=[0.50,2.00] → $  180,325.49  Δ=+$     81.26  (119.8s)
+[stage2_L] svr_nystroem   ρ=0.90 L=14 γ=0.50 clip=[0.50,2.00] → $  180,345.37  Δ=+$     61.38  (119.8s)
+[stage2_L] svr_nystroem   ρ=0.90 L=21 γ=0.50 clip=[0.50,2.00] → $  180,326.01  Δ=+$     80.74  (120.5s)
+
+=== Stage 3 (xgboost): sweep γ ===
+[stage3_gamma] xgboost        ρ=0.70 L= 7 γ=0.25 clip=[0.50,2.00] → $  172,899.98  Δ=+$    251.68  ( 99.7s)
+[stage3_gamma] xgboost        ρ=0.70 L= 7 γ=0.50 clip=[0.50,2.00] → $  173,084.84  Δ=+$     66.82  ( 99.9s)
+[stage3_gamma] xgboost        ρ=0.70 L= 7 γ=0.75 clip=[0.50,2.00] → $  173,381.28  Δ=$   -229.62  (102.3s)
+
+=== Stage 3 (svr_nystroem): sweep γ ===
+[stage3_gamma] svr_nystroem   ρ=0.90 L= 7 γ=0.25 clip=[0.50,2.00] → $  180,213.01  Δ=+$    193.74  (123.6s)
+[stage3_gamma] svr_nystroem   ρ=0.90 L= 7 γ=0.50 clip=[0.50,2.00] → $  180,325.49  Δ=+$     81.26  (120.9s)
+[stage3_gamma] svr_nystroem   ρ=0.90 L= 7 γ=0.75 clip=[0.50,2.00] → $  180,599.14  Δ=$   -192.40  (121.7s)
+
+=== Stage 4 (xgboost): try tighter clip ===
+[stage4_clip] xgboost        ρ=0.70 L= 7 γ=0.25 clip=[0.70,1.50] → $  172,474.74  Δ=+$    676.92  (104.2s)
+
+=== Stage 4 (svr_nystroem): try tighter clip ===
+[stage4_clip] svr_nystroem   ρ=0.90 L= 7 γ=0.25 clip=[0.70,1.50] → $  180,099.81  Δ=+$    306.94  (122.2s)
+
+Best configurations:
+{
+  "baseline": {
+    "XGB-PI (current)": 173151.6581,
+    "SVR-PI (current)": 180406.74730000002
+  },
+  "best_xgb": {
+    "rho": 0.7,
+    "L": 7,
+    "gamma": 0.25,
+    "cf_min": 0.7,
+    "cf_max": 1.5,
+    "annual_cost": 172474.74089870031,
+    "delta_vs_current_xgb_pi": 676.9172
+  },
+  "best_svr": {
+    "rho": 0.9,
+    "L": 7,
+    "gamma": 0.25,
+    "cf_min": 0.7,
+    "cf_max": 1.5,
+    "annual_cost": 180099.80558936254,
+    "delta_vs_current_svr_pi": 306.9417
+  }
+}

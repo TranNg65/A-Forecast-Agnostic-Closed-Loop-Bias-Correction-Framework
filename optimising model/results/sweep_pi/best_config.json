@@ -1,0 +1,24 @@
+{
+  "baseline": {
+    "XGB-PI (current)": 173151.6581,
+    "SVR-PI (current)": 180406.74730000002
+  },
+  "best_xgb": {
+    "rho": 0.7,
+    "L": 7,
+    "gamma": 0.25,
+    "cf_min": 0.7,
+    "cf_max": 1.5,
+    "annual_cost": 172474.74089870031,
+    "delta_vs_current_xgb_pi": 676.9172
+  },
+  "best_svr": {
+    "rho": 0.9,
+    "L": 7,
+    "gamma": 0.25,
+    "cf_min": 0.7,
+    "cf_max": 1.5,
+    "annual_cost": 180099.80558936254,
+    "delta_vs_current_svr_pi": 306.9417
+  }
+}
