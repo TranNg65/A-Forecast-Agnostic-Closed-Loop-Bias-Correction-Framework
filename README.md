@@ -1,8 +1,6 @@
-# A Forecast-Agnostic Closed-Loop Bias-Correction Framework for Shared-Battery Dispatch
+#Closed Loop Bias Correction for Predict Then Optimise Shared Battery Dispatch in Apartment Energy
 
-Code accompanying the paper *"A Forecast-Agnostic Closed-Loop Bias-Correction
-Framework for Predict-Then-Optimise Shared-Battery Dispatch in Apartment
-Energy-Sharing Schemes."*
+Code accompanying the paper *"Closed Loop Bias Correction for Predict Then Optimise Shared Battery Dispatch in Apartment Energy."*
 
 The framework adapts a frozen, population-trained demand-forecasting model to a
 target apartment energy-sharing scheme with a closed-loop, block-resolved
