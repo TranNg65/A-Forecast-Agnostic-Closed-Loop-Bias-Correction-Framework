@@ -1,12 +1,12 @@
 """
-Post-process the 7-scenario annual MPC results (PF, XGB-PI, XGB-noPI,
-SVR-PI, SVR-noPI, HA, Pers) from the aggregate-blended PI comparison CSV.
+Post-process the 7-scenario annual MPC results (PF, XGB-ACLBC, XGB-noACLBC,
+SVR-ACLBC, SVR-noACLBC, HA, Pers) from the aggregate-blended ACLBC comparison CSV.
 
 Produces:
   results/scale_10_all_scenarios/all_scenarios_summary.txt
   results/scale_10_all_scenarios/annual_cost_bars.png
   results/scale_10_all_scenarios/cumulative_cost.png
-  results/scale_10_all_scenarios/pi_gains_xgb_vs_svr.png
+  results/scale_10_all_scenarios/aclbc_gains_xgb_vs_svr.png
 """
 
 import os
@@ -32,19 +32,30 @@ _MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 # Display ordering used everywhere (cheapest to most expensive expected)
 SCENARIOS = [
     ("Perfect Foresight",  "cost_perfect",       "#424242"),
-    ("XGB-PI (proposed)",  "cost_xgboost",       "#1565c0"),
-    ("XGB-noPI",           "cost_xgboost_no_pi", "#ff8a65"),
-    ("SVR-PI",             "cost_svr",           "#43a047"),
-    ("SVR-noPI",           "cost_svr_no_pi",     "#aed581"),
+    ("XGBoost + bias correction (proposed)", "cost_xgboost", "#1565c0"),
+    ("XGBoost, no correction",           "cost_xgboost_no_pi", "#ff8a65"),
+    ("SVR + bias correction",            "cost_svr",           "#43a047"),
+    ("SVR, no correction",               "cost_svr_no_pi",     "#aed581"),
     ("Historical Average", "cost_hist_avg",      "#8e24aa"),
     ("Persistence",        "cost_persistence",   "#6d4c41"),
 ]
 
+# Two-line x-tick labels for the bar chart (aligned with SCENARIOS order)
+BAR_TICKS = [
+    "Perfect\nForesight",
+    "XGBoost +\nbias correction\n(proposed)",
+    "XGBoost,\nno correction",
+    "SVR +\nbias correction",
+    "SVR,\nno correction",
+    "Historical\nAverage",
+    "Persistence",
+]
+
 MAE_COLS = [
-    ("XGB-PI",             "mae_xgb",         "rmse_xgb"),
-    ("XGB-noPI",           "mae_xgb_no_pi",   "rmse_xgb_no_pi"),
-    ("SVR-PI",             "mae_svr",         "rmse_svr"),
-    ("SVR-noPI",           "mae_svr_no_pi",   "rmse_svr_no_pi"),
+    ("XGBoost + bias correction", "mae_xgb",         "rmse_xgb"),
+    ("XGBoost, no correction",    "mae_xgb_no_pi",   "rmse_xgb_no_pi"),
+    ("SVR + bias correction",     "mae_svr",         "rmse_svr"),
+    ("SVR, no correction",        "mae_svr_no_pi",   "rmse_svr_no_pi"),
     ("Historical Average", "mae_hist_avg",    "rmse_hist_avg"),
     ("Persistence",        "mae_persistence", "rmse_persistence"),
 ]
@@ -84,7 +95,8 @@ def _bar_chart(ann, ha_baseline, path):
     ax.set_title("Annual realised settlement cost — 7-scenario MPC comparison")
     ax.legend(loc="upper left", fontsize=9)
     ax.grid(axis="y", alpha=0.3)
-    plt.xticks(rotation=20, ha="right")
+    ax.set_xticks(range(len(names)))
+    ax.set_xticklabels(BAR_TICKS, rotation=0, ha="center", fontsize=8)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -107,23 +119,23 @@ def _cumulative_plot(df, path):
 
 
 def _pi_gains_plot(df, path):
-    """Two-panel: daily PI gain for XGB and for SVR, plus cumulative gains."""
+    """Two-panel: daily ACLBC saving for XGB and for SVR, plus cumulative gains."""
     xgb_gain = df["cost_xgboost_no_pi"] - df["cost_xgboost"]
     svr_gain = df["cost_svr_no_pi"]     - df["cost_svr"]
 
     fig, axes = plt.subplots(2, 1, figsize=(13, 7.5), sharex=True)
 
-    axes[0].bar(df["date"], xgb_gain, width=1.0, color="#1565c0", alpha=0.6, label="XGB PI gain")
-    axes[0].bar(df["date"], svr_gain, width=1.0, color="#43a047", alpha=0.6, label="SVR PI gain")
+    axes[0].bar(df["date"], xgb_gain, width=1.0, color="#1565c0", alpha=0.6, label="XGBoost: correction saving")
+    axes[0].bar(df["date"], svr_gain, width=1.0, color="#43a047", alpha=0.6, label="SVR: correction saving")
     axes[0].axhline(0, color="black", linewidth=0.5)
-    axes[0].set_ylabel("Daily PI gain (\\$/day)")
-    axes[0].set_title("Per-day PI feedback gain")
+    axes[0].set_ylabel("Daily correction saving (\\$/day)")
+    axes[0].set_title("Per-day correction saving")
     axes[0].legend(loc="upper right")
     axes[0].grid(alpha=0.3)
 
-    axes[1].plot(df["date"], xgb_gain.cumsum(), label="XGB cumulative PI gain", color="#1565c0", linewidth=1.3)
-    axes[1].plot(df["date"], svr_gain.cumsum(), label="SVR cumulative PI gain", color="#43a047", linewidth=1.3)
-    axes[1].set_ylabel("Cumulative PI gain (\\$)")
+    axes[1].plot(df["date"], xgb_gain.cumsum(), label="XGBoost: cumulative correction saving", color="#1565c0", linewidth=1.3)
+    axes[1].plot(df["date"], svr_gain.cumsum(), label="SVR: cumulative correction saving", color="#43a047", linewidth=1.3)
+    axes[1].set_ylabel("Cumulative correction saving (\\$)")
     axes[1].set_xlabel("Date (2013)")
     axes[1].legend(loc="upper left")
     axes[1].grid(alpha=0.3)
@@ -157,11 +169,11 @@ def _latex_annual(ann, df):
     rows = []
     for label, _, _ in SCENARIOS:
         c = ann[label]
-        metric_label = "XGB-PI" if label == "XGB-PI (proposed)" else label
+        metric_label = "XGBoost + bias correction" if label == "XGBoost + bias correction (proposed)" else label
         if label == "Perfect Foresight":
             disp = "Perfect Foresight (PF)"
-        elif label == "XGB-PI (proposed)":
-            disp = "\\textbf{XGB-PI (proposed)}"
+        elif label == "XGBoost + bias correction (proposed)":
+            disp = "\\textbf{XGBoost + bias correction (proposed)}"
         else:
             disp = label
         mae = mae_map.get(metric_label, 0.0)
@@ -180,17 +192,17 @@ def _latex_pi_ablation_combined(df):
     w_svr, p_svr = _wilcoxon_signed(svr_gain)
 
     return "\n".join([
-        f"Annual cost saving from PI feedback & "
+        f"Annual cost saving from ACLBC & "
         f"\\${xgb_gain.sum():,.2f} & \\${svr_gain.sum():,.2f} \\\\",
-        f"Mean daily PI gain & "
+        f"Mean daily ACLBC saving & "
         f"\\${xgb_gain.mean():,.2f} & \\${svr_gain.mean():,.2f} \\\\",
-        f"Median daily PI gain & "
+        f"Median daily ACLBC saving & "
         f"\\${xgb_gain.median():,.2f} & \\${svr_gain.median():,.2f} \\\\",
-        f"Days PI strictly improves cost (out of {len(df)}) & "
+        f"Days ACLBC strictly improves cost (out of {len(df)}) & "
         f"{int((xgb_gain > 0).sum())} & {int((svr_gain > 0).sum())} \\\\",
         f"Wilcoxon signed-rank statistic ($W$) & "
         f"{_fmt(w_xgb,0)} & {_fmt(w_svr,0)} \\\\",
-        f"$p$-value (alt.\\ $\\Delta C^{{\\mathrm{{PI}}}}>0$) & "
+        f"$p$-value (alt.\\ $\\Delta C^{{\\mathrm{{ACLBC}}}}>0$) & "
         f"{p_xgb:.3e} & {p_svr:.3e} \\\\",
     ])
 
@@ -207,7 +219,7 @@ def main():
 
     _bar_chart(ann, ha, os.path.join(_OUT, "annual_cost_bars.png"))
     _cumulative_plot(df, os.path.join(_OUT, "cumulative_cost.png"))
-    _pi_gains_plot(df, os.path.join(_OUT, "pi_gains_xgb_vs_svr.png"))
+    _pi_gains_plot(df, os.path.join(_OUT, "aclbc_gains_xgb_vs_svr.png"))
 
     summary_path = os.path.join(_OUT, "all_scenarios_summary.txt")
     with open(summary_path, "w") as f:
@@ -220,7 +232,7 @@ def main():
 
         xgb_gain = df["cost_xgboost_no_pi"] - df["cost_xgboost"]
         svr_gain = df["cost_svr_no_pi"]     - df["cost_svr"]
-        w("\nPI feedback gain:\n")
+        w("\nACLBC saving:\n")
         w(f"  XGB annual: ${xgb_gain.sum():,.2f}  "
           f"(mean ${xgb_gain.mean():.2f}/day, {(xgb_gain > 0).sum()}/{len(df)} wins)\n")
         w(f"  SVR annual: ${svr_gain.sum():,.2f}  "
@@ -239,14 +251,14 @@ def main():
         w("LaTeX rows — annual combined table\n")
         w("=" * 78 + "\n\n")
         w(_latex_annual(ann, df) + "\n\n")
-        w("LaTeX rows — combined PI ablation table\n")
+        w("LaTeX rows — combined ACLBC ablation table\n")
         w("-" * 78 + "\n")
         w(_latex_pi_ablation_combined(df) + "\n")
 
     print(f"\n→ {summary_path}")
     print(f"→ {_OUT}/annual_cost_bars.png")
     print(f"→ {_OUT}/cumulative_cost.png")
-    print(f"→ {_OUT}/pi_gains_xgb_vs_svr.png\n")
+    print(f"→ {_OUT}/aclbc_gains_xgb_vs_svr.png\n")
 
     # console summary
     print(f"{'Scenario':<22} {'Annual cost':>14} {'Δ vs HA (%)':>12}")

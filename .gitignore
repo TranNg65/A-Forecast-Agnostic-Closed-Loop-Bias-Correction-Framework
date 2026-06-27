@@ -57,3 +57,6 @@ token.txt
 .env
 .env.*
 credentials*.json
+
+# ---- Manuscript (kept on Overleaf / journal, not in this code repo) ----
+paper/
